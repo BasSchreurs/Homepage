@@ -1,5 +1,6 @@
 services:
   dashboard:
+    container_name: dashboard-web-1
     build: .
     expose:
       - "8004"
@@ -19,6 +20,7 @@ services:
 
 volumes:
   dashboard_static:
+    external: true
 
 networks:
   shared:
