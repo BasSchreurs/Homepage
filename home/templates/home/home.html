@@ -236,9 +236,23 @@
 
     // --- NOTES ---
         const notesInput = document.getElementById('notes-input');
-        notesInput.value = localStorage.getItem('notes') || '';
+
+        fetch('/home/api/notes/')
+            .then(r => r.json())
+            .then(data => {
+                notesInput.value = data.notes;
+            });
+
+        let notesTimer;
         notesInput.addEventListener('input', () => {
-            localStorage.setItem('notes', notesInput.value);
+            clearTimeout(notesTimer);
+            notesTimer = setTimeout(() => {
+                fetch('/home/api/notes/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes: notesInput.value })
+                });
+            }, 500);
         });
 
     // --- NEWS ---

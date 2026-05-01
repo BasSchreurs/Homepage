@@ -9,6 +9,7 @@ services:
     volumes:
       - dashboard_static:/app/staticfiles
       - ./favorites.json:/app/favorites.json
+      - ./notes.txt:/app/notes.txt
     restart: always
     networks:
       - shared

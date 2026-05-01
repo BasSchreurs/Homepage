@@ -88,3 +88,19 @@ def favorites(request):
             with open(fav_file, 'w') as f:
                 json.dump(favs, f)
         return JsonResponse({'success': True})
+
+@csrf_exempt
+def notes(request):
+    notes_file = os.path.join(settings.BASE_DIR, 'notes.txt')
+
+    if request.method == 'GET':
+        if os.path.exists(notes_file):
+            with open(notes_file) as f:
+                return JsonResponse({'notes': f.read()})
+        return JsonResponse({'notes': ''})
+
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        with open(notes_file, 'w') as f:
+            f.write(body.get('notes', ''))
+        return JsonResponse({'success': True})
