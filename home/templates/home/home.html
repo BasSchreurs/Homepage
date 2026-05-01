@@ -16,8 +16,12 @@
         <div class="card">
             <h2>☁️ Weather</h2>
             <div class="weather-info" id="weather-display">
+                <div class="weather-top">
                 <div class="weather-temp" id="weather-temp">--°C</div>
+                    <img id="weather-icon" class="weather-icon" src="" alt="">
+                </div>
                 <div class="weather-desc" id="weather-desc">loading...</div>
+                <div class="weather-sun" id="weather-sun"></div>
                 <div class="weather-details" id="weather-details"></div>
             </div>
             <input type="text" id="city-input" placeholder="Search city..." style="margin-top: 16px;">
@@ -36,8 +40,14 @@
             </div>
         </div>
 
+        <!-- NOTES -->
+        <div class="card note-card">
+            <h2>📝 Notes</h2>
+            <textarea id="notes-input" placeholder="Write something..."></textarea>
+        </div>
+
         <!-- GOOGLE SEARCH -->
-         <div class="card">
+         <div class="card google-card">
             <h2>
                 <svg width="20" height="20" viewBox="0 0 48 48" style="vertical-align: middle;">
                 <path fill="#EA4335" d="M24 9.5c3.4 0 6.5 1.2 8.9 3.2l6.6-6.6C35.7 2.6 30.2 0 24 0 14.6 0 6.5 5.5 2.5 13.5l7.7 6C12 13.3 17.6 9.5 24 9.5z"/>
@@ -53,7 +63,7 @@
          
 
         <!-- YOUTUBE SEARCH -->
-        <div class="card">
+        <div class="card youtube-card">
             <h2>
                 <svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;">
                 <path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.5 12 20.5 12 20.5s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.8 15.5v-7l6.5 3.5-6.5 3.5z"/>
@@ -65,20 +75,25 @@
         </div>
 
         <!-- TORRENT SEARCH -->
-        <div class="card">
+        <div class="card torrent-card">
             <h2>🏴‍☠️ Torrent Search</h2>
             <input type="text" id="torrent-input" placeholder="Search torrents...">
             <button onclick="searchTorrent()">Search</button>
         </div>
 
-        <!-- WALLPAPER -->
+        <!-- NEWS -->
         <div class="card">
+            <h2>📰 NOS Nieuws</h2>
+            <div id="news-list"></div>
+        </div>
+        
+        <!-- WALLPAPER -->
+        <div class="card wallpaper-card">
             <h2>🖼️ Wallpaper</h2>
             <div class="wallpaper-buttons" id="wallpaper-buttons"></div>
             <input type="text" id="wp-url" placeholder="Or paste image URL..." style="margin-top: 16px;">
             <button onclick="setCustomWallpaper()">Set Wallpaper</button>
         </div>
-
     </div>
 </div>
 
@@ -152,10 +167,14 @@
             .then(r => r.json())
             .then(data => {
                 document.getElementById('weather-temp').textContent = `${data.main.temp.toFixed(0)}°C`;
+                document.getElementById('weather-icon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
                 document.getElementById('weather-desc').textContent = data.weather[0].description;
+                const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'});
+                const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('nl-NL', {hour: '2-digit', minute: '2-digit'});
+                document.getElementById('weather-sun').textContent = `🌅 ${sunrise}  🌇 ${sunset}`;
                 document.getElementById('weather-details').textContent =
-                    `💧 ${data.main.humidity}%  💨 ${data.wind.speed} m/s  📍 ${data.name}`;
-            })
+                    `🌧️ ${Math.round(data.pop * 100)}%  💧 ${data.main.humidity}%   💨 ${data.wind.speed} m/s  📍 ${data.name}`;
+                })
             .catch(() => {
                 document.getElementById('weather-desc').textContent = 'Could not load weather';
             });
@@ -212,6 +231,32 @@
     }
 
     loadFavorites();
+
+    // --- NOTES ---
+        const notesInput = document.getElementById('notes-input');
+        notesInput.value = localStorage.getItem('notes') || '';
+        notesInput.addEventListener('input', () => {
+            localStorage.setItem('notes', notesInput.value);
+        });
+
+    // --- NEWS ---
+        function loadNews() {
+    fetch('/api/news/')
+        .then(r => r.json())
+        .then(data => {
+            const list = document.getElementById('news-list');
+            list.innerHTML = data.items.map(item => `
+                <a href="${item.link}" target="_blank" class="news-item">
+                    <span class="news-meta">
+                        ${item.time} ${item.category ? '· ' + item.category : ''}
+                    </span>
+                    ${item.title}
+                </a>
+            `).join('');
+        });
+}
+
+loadNews();
 </script>
 </body>
 </html>
