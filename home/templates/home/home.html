@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'home/css/style.css' %}">
+
+</head>
+<body>
+<div class="overlay">
+    <div class="grid">
+
+        <!-- WEATHER -->
+        <div class="card">
+            <h2>☁️ Weather</h2>
+            <div class="weather-info" id="weather-display">
+                <div class="weather-temp" id="weather-temp">--°C</div>
+                <div class="weather-desc" id="weather-desc">loading...</div>
+                <div class="weather-details" id="weather-details"></div>
+            </div>
+            <input type="text" id="city-input" placeholder="Search city..." style="margin-top: 16px;">
+            <button onclick="fetchWeather()">Search</button>
+        </div>
+
+        <!-- FAVORITES -->
+        <div class="card">
+            <h2>⭐ Favorites</h2>
+            <div class="favorites-list" id="favorites-list"></div>
+            <div class="add-fav">
+                <input type="text" id="fav-title" placeholder="Title">
+                <input type="text" id="fav-url" placeholder="URL (https://...)">
+                <input type="text" id="fav-icon" placeholder="Icon (emoji, e.g. 🎬)">
+                <button onclick="addFavorite()">+ Add Favorite</button>
+            </div>
+        </div>
+
+        <!-- YOUTUBE SEARCH -->
+        <div class="card">
+            <h2>
+                <svg width="20" height="20" viewBox="0 0 24 24" style="vertical-align: middle;">
+                <path fill="#FF0000" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1C4.5 20.5 12 20.5 12 20.5s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.8 15.5v-7l6.5 3.5-6.5 3.5z"/>
+                </svg>
+                YouTube
+            </h2>
+            <input type="text" id="yt-input" placeholder="Search YouTube...">
+            <button onclick="searchYoutube()">Search</button>
+        </div>
+
+        <!-- TORRENT SEARCH -->
+        <div class="card">
+            <h2>🏴‍☠️ Torrent Search</h2>
+            <input type="text" id="torrent-input" placeholder="Search torrents...">
+            <button onclick="searchTorrent()">Search</button>
+        </div>
+
+        <!-- WALLPAPER -->
+        <div class="card">
+            <h2>🖼️ Wallpaper</h2>
+            <div class="wallpaper-buttons" id="wallpaper-buttons"></div>
+            <input type="text" id="wp-url" placeholder="Or paste image URL..." style="margin-top: 16px;">
+            <button onclick="setCustomWallpaper()">Set Wallpaper</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // --- WALLPAPERS ---
+    const wallpapers = [
+        { color: '#1a1a2e', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920' },
+        { color: '#0f3460', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920' },
+        { color: '#16213e', url: 'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=1920' },
+        { color: '#1b4332', url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920' },
+        { color: '#6a0572', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920' },
+    ];
+
+    function setWallpaper(url) {
+        document.body.style.backgroundImage = `url('${url}')`;
+        localStorage.setItem('wallpaper', url);
+    }
+
+    function setCustomWallpaper() {
+        const url = document.getElementById('wp-url').value.trim();
+        if (url) setWallpaper(url);
+    }
+
+    const wpContainer = document.getElementById('wallpaper-buttons');
+    wallpapers.forEach(wp => {
+        const btn = document.createElement('button');
+        btn.className = 'wp-btn';
+        btn.style.background = wp.color;
+        btn.onclick = () => setWallpaper(wp.url);
+        wpContainer.appendChild(btn);
+    });
+
+    const savedWallpaper = localStorage.getItem('wallpaper');
+    if (savedWallpaper) setWallpaper(savedWallpaper);
+
+    // --- TORRENT SEARCH ---
+    function searchTorrent() {
+        const query = document.getElementById('torrent-input').value.trim();
+        if (query) window.open(`https://thepiratebay11.com/search/${encodeURIComponent(query)}/1/99/0`, '_blank');
+    }
+
+    document.getElementById('torrent-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') searchTorrent();
+    });
+
+    // --- YOUTUBE SEARCH ---
+    function searchYoutube() {
+        const query = document.getElementById('yt-input').value.trim();
+        if (query) window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank');
+    }
+
+    document.getElementById('yt-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') searchYoutube();
+    });
+
+    // --- WEATHER ---
+    function fetchWeather(city = 'Krommenie') {
+        const input = document.getElementById('city-input').value.trim();
+        const target = input || city;
+        fetch(`/api/weather/?city=${encodeURIComponent(target)}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('weather-temp').textContent = `${data.main.temp.toFixed(0)}°C`;
+                document.getElementById('weather-desc').textContent = data.weather[0].description;
+                document.getElementById('weather-details').textContent =
+                    `💧 ${data.main.humidity}%  💨 ${data.wind.speed} m/s  📍 ${data.name}`;
+            })
+            .catch(() => {
+                document.getElementById('weather-desc').textContent = 'Could not load weather';
+            });
+    }
+
+    document.getElementById('city-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') fetchWeather();
+    });
+
+    fetchWeather();
+
+    // --- FAVORITES ---
+    function loadFavorites() {
+        fetch('/api/favorites/')
+            .then(r => r.json())
+            .then(favs => {
+                const list = document.getElementById('favorites-list');
+                list.innerHTML = '';
+                favs.forEach(fav => {
+                    const item = document.createElement('div');
+                    item.className = 'fav-item';
+                    item.innerHTML = `
+                        ${fav.icon} <a href="${fav.url}" target="_blank">${fav.title}</a>
+                        <span class="remove" onclick="removeFavorite('${fav.id}')">✕</span>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+    }
+
+    function addFavorite() {
+        const title = document.getElementById('fav-title').value.trim();
+        const url = document.getElementById('fav-url').value.trim();
+        const icon = document.getElementById('fav-icon').value.trim() || '🔗';
+        if (!title || !url) return;
+        fetch('/api/favorites/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: Date.now().toString(), title, url, icon })
+        }).then(() => {
+            document.getElementById('fav-title').value = '';
+            document.getElementById('fav-url').value = '';
+            document.getElementById('fav-icon').value = '';
+            loadFavorites();
+        });
+    }
+
+    function removeFavorite(id) {
+        fetch('/api/favorites/', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id })
+        }).then(() => loadFavorites());
+    }
+
+    loadFavorites();
+</script>
+</body>
+</html>

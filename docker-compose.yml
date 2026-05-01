@@ -1,0 +1,26 @@
+services:
+  dashboard:
+    build: .
+    expose:
+      - "8004"
+    env_file:
+      - .env
+    volumes:
+      - dashboard_static:/app/staticfiles
+      - ./favorites.json:/app/favorites.json
+    restart: always
+    networks:
+      - shared
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  dashboard_static:
+
+networks:
+  shared:
+    external: true
+    name: shared_network
