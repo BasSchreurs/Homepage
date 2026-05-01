@@ -107,6 +107,8 @@
         { color: '#6a0572', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920' },
     ];
 
+    const DEFAULT_WALLPAPER = wallpapers[0].url;
+
     function setWallpaper(url) {
         document.body.style.backgroundImage = `url('${url}')`;
         localStorage.setItem('wallpaper', url);
@@ -127,7 +129,7 @@
     });
 
     const savedWallpaper = localStorage.getItem('wallpaper');
-    if (savedWallpaper) setWallpaper(savedWallpaper);
+    setWallpaper(savedWallpaper || DEFAULT_WALLPAPER);
 
     // --- TORRENT SEARCH ---
     function searchTorrent() {
