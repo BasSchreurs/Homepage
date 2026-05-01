@@ -117,6 +117,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+FORCE_SCRIPT_NAME = '/home'
 
 # key in .env file
 OPENWEATHER_API_KEY = config('OPENWEATHER_API_KEY')
