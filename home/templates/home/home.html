@@ -163,7 +163,7 @@
     function fetchWeather(city = 'Krommenie') {
         const input = document.getElementById('city-input').value.trim();
         const target = input || city;
-        fetch(`/api/weather/?city=${encodeURIComponent(target)}`)
+        fetch(`/home/api/weather/?city=${encodeURIComponent(target)}`)
             .then(r => r.json())
             .then(data => {
                 document.getElementById('weather-temp').textContent = `${data.main.temp.toFixed(0)}°C`;
@@ -188,7 +188,7 @@
 
     // --- FAVORITES ---
     function loadFavorites() {
-        fetch('/api/favorites/')
+        fetch('/home/api/favorites/')
             .then(r => r.json())
             .then(favs => {
                 const list = document.getElementById('favorites-list');
@@ -210,7 +210,7 @@
         const url = document.getElementById('fav-url').value.trim();
         const icon = document.getElementById('fav-icon').value.trim() || '🔗';
         if (!title || !url) return;
-        fetch('/api/favorites/', {
+        fetch('/home/api/favorites/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: Date.now().toString(), title, url, icon })
@@ -223,7 +223,7 @@
     }
 
     function removeFavorite(id) {
-        fetch('/api/favorites/', {
+        fetch('/home/api/favorites/', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id })
@@ -241,7 +241,7 @@
 
     // --- NEWS ---
         function loadNews() {
-    fetch('/api/news/')
+    fetch('/home/api/news/')
         .then(r => r.json())
         .then(data => {
             const list = document.getElementById('news-list');
