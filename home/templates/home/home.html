@@ -241,7 +241,9 @@
         fetch(`${API_BASE}/api/notes/`)
             .then(r => r.json())
             .then(data => {
-                notesInput.value = data.notes;
+                if (data.notes) {
+                    notesInput.value = data.notes;
+                }
             });
 
         let notesTimer;
