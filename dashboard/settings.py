@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure--q8nw+4q$l^_qyzzys=2@@b5a!#$(-+745n2zp#s54!u@2w+33
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['basschreurs.nl', 'www.basschreurs.nl', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -116,9 +117,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = '/home/static/'
+STATIC_URL = os.environ.get('STATIC_URL', '/static/')
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-FORCE_SCRIPT_NAME = '/home'
+FORCE_SCRIPT_NAME = os.environ.get('FORCE_SCRIPT_NAME', '')
 
 # key in .env file
 OPENWEATHER_API_KEY = config('OPENWEATHER_API_KEY')

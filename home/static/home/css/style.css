@@ -1,15 +1,21 @@
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    background-color: black;
+    min-height: 100%;
+}
+
 body {
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     font-family: 'Segoe UI', sans-serif;
     transition: background-image 0.5s ease;
 }
@@ -115,6 +121,15 @@ button:hover {
     color: white;
 }
 
+.buienradar-link {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+}
+
+.buienradar-link:hover {
+    color: white;
+}
+
 .favorites-list {
     display: flex;
     flex-wrap: wrap;
@@ -152,6 +167,16 @@ button:hover {
     gap: 8px;
 }
 
+.fav-link {
+    color: white;
+    text-decoration: none;
+    flex: 1;
+}
+
+.fav-link:hover {
+    opacity: 0.8;
+}
+
 .note-card {
     background: rgba(255, 235, 59, 0.25);
     border: 1px solid rgba(255, 220, 0, 0.3);
@@ -176,6 +201,16 @@ textarea {
 
 textarea::placeholder {
     color: rgba(255, 255, 255, 0.5);
+}
+
+.card-link {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.card-link:hover {
+    opacity: 1;
 }
 
 .news-item {

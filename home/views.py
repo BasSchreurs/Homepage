@@ -12,7 +12,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
-    return render(request, 'home/home.html')
+    return render(request, 'home/home.html', {
+        'api_base': '/home' if os.environ.get('FORCE_SCRIPT_NAME') else '',
+    })
 
 
 def weather(request):
@@ -88,6 +90,7 @@ def favorites(request):
             with open(fav_file, 'w') as f:
                 json.dump(favs, f)
         return JsonResponse({'success': True})
+
 
 @csrf_exempt
 def notes(request):
